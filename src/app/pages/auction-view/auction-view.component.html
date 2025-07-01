@@ -1,0 +1,305 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+            <h1 class="text-3xl font-bold">{{salvageData?.title}}</h1>
+            <div class="flex flex-wrap items-center gap-2 mt-2 text-gray-500">
+                <p class="text-muted-foreground ms-2">{{salvageData?.companyName}}</p><span>•</span>
+                <div ngClass="{'text-red-500': salvageData?.status, 'text-green-500': !salvageData?.status}"
+                    class="inline-flex text-white items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-primary-foreground bg-green-500">
+                    {{salvageData?.status ? 'Active' : 'End'}}
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <ng-container *ngIf="true">
+                <button (click)="watchList(salvageData?.salvageId)"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10">
+                    <img *ngIf="salvageData?.watchlistStatus == 'YES'" class="h-5 w-5" src="assets/svg/fill_watchlist.svg" alt="">
+                    <img *ngIf="salvageData?.watchlistStatus == 'NO'" class="h-5 w-5" src="assets/svg/watchlist.svg" alt="">
+                    <span class="sr-only">Remove from watchlist</span>
+                </button>
+            </ng-container>
+            <a (click)="back()"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                Back to Auctions
+            </a>
+        </div>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <div class="space-y-6">
+
+                <div class="overflow-hidden rounded-lg border">
+
+                    <div class="relative group h-64 w-full sm:h-80 md:h-96 overflow-hidden" (mousemove)="onZoom($event)"
+                        (mouseleave)="onLeave()" #imageContainer>
+                        <img [src]="vehicleImg" alt="Zoomable Image" class="object-contain w-full h-full" #imageElement>
+                        <div class="zoom-lens pointer-events-none" 
+                        *ngIf="zoomVisible" [ngStyle]="zoomStyles"></div>
+                    </div>
+
+                    <div class="flex gap-2 overflow-x-auto p-2">
+                        <button *ngFor="let thumb of thumbnails; let i = index"
+                            (click)="vehicleImg = thumb; selectedIndex = i"
+                            class="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border"
+                            [ngClass]="{'ring-2 ring-slate-600': selectedIndex === i}">
+                            <img [src]="thumb" alt="Thumbnail" class="object-cover w-full h-full absolute inset-0" />
+                        </button>
+                    </div>
+
+                </div>
+
+                <div>
+                    <div class="inline-flex bg-slate-100 h-10 items-center justify-center rounded-md p-1 gap-2"
+                        style="outline: none;">
+
+                        <button type="button" (click)="activeTab = 'details'"
+                            [ngClass]="{'bg-white text-black': activeTab === 'details', 'hover:bg-white': activeTab !== 'details'}"
+                            class="inline-flex bg-white hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">Details
+                        </button>
+
+                        <button type="button" (click)="activeTab = 'condition'"
+                            [ngClass]="{'bg-white text-black': activeTab === 'condition', 'hover:bg-white': activeTab !== 'condition'}"
+                            class="inline-flex hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">
+                            Condition
+                        </button>
+
+                        <button type="button" (click)="activeTab = 'bidHistory'"
+                            [ngClass]="{'bg-white text-black': activeTab === 'bidHistory', 'hover:bg-white': activeTab !== 'bidHistory'}"
+                            class="inline-flex hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">Bid
+                            History
+                        </button>
+
+                    </div>
+
+                    <!-- First -->
+                    <div *ngIf="activeTab === 'details'"
+                        class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4 pt-4">
+                        <div>
+                            <h3 class="text-lg font-semibold">Description</h3>
+                            <p class="text-muted-foreground">{{salvageData?.description}}</p>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                                <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                                    <div class="font-semibold tracking-tight text-base">Auction Details</div>
+                                </div>
+                                <div class="p-6 pt-0 space-y-2 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-calendar h-4 w-4 text-muted-foreground">
+                                            <path d="M8 2v4"></path>
+                                            <path d="M16 2v4"></path>
+                                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                            <path d="M3 10h18"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="font-medium">Start Date</p>
+                                            <p>{{salvageData?.biddingStart | date:'medium'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-clock h-4 w-4 text-muted-foreground">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        <div>
+                                            <p class="font-medium">End Date</p>
+                                            <p>{{salvageData?.biddingEnd | date:'medium'}}
+                                            <p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">
+                                            ₹
+                                        </span>
+                                        <div>
+                                            <p class="font-medium">Minimum Bid</p>
+                                            <p>{{salvageData?.minimumBidAmount | currency: 'INR':'symbol':'1.0-0'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">
+                                            ₹
+                                        </span>
+                                        <div>
+                                            <p class="font-medium">Bid Increment</p>
+                                            <p>{{salvageData?.bidIncrement | currency: 'INR':'symbol':'1.0-0'}}
+                                            <p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                                <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                                    <div class="font-semibold tracking-tight text-base">Location</div>
+                                </div>
+                                <div class="p-6 pt-0 space-y-2 text-sm">
+                                    <p class="text-muted-foreground">{{salvageData?.location}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second -->
+                    <div *ngIf="activeTab === 'condition'"
+                        class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4 pt-4">
+                        <div data-state="active" data-orientation="horizontal" role="tabpanel"
+                            aria-labelledby="radix-«r7»-trigger-condition" id="radix-«r7»-content-condition"
+                            tabindex="0"
+                            class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4 pt-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">Vehicle Condition</h3>
+                                <p class="text-muted-foreground">{{salvageData?.conditionDetails}}</p>
+                            </div>
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                                <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                                    <div class="font-semibold tracking-tight text-base">Important Notice</div>
+                                </div>
+                                <div class="p-6 pt-0 text-sm">
+                                    <div class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-info mt-0.5 h-4 w-4 text-amber-500">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 16v-4"></path>
+                                            <path d="M12 8h.01"></path>
+                                        </svg>
+                                        <p>All salvage vehicles are sold as-is with no warranty. Buyers are responsible
+                                            for inspection and
+                                            verification of the vehicle's condition. The insurance company makes no
+                                            guarantees about the
+                                            vehicle's condition beyond what is stated in the listing.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Third -->
+                    <div *ngIf="activeTab === 'bidHistory'"
+                        class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pt-4">
+                        <div data-state="active" data-orientation="horizontal" role="tabpanel"
+                            aria-labelledby="radix-«r7»-trigger-bids" id="radix-«r7»-content-bids" tabindex="0"
+                            class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pt-4">
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                                <div class="flex flex-col space-y-1.5 p-6">
+                                    <div class="font-semibold tracking-tight text-base">Bid History</div>
+                                    <div class="text-sm text-muted-foreground">Total of {{bidHistory?.length}} bids
+                                        placed</div>
+                                </div>
+                                <div class="p-6 pt-0">
+                                    <div class="overflow-x-auto rounded-md border">
+                                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                            <thead class="bg-muted">
+                                                <tr>
+                                                    <th class="px-4 py-2 text-left font-semibold text-muted-foreground">
+                                                        Bidder</th>
+                                                    <th class="px-4 py-2 text-left font-semibold text-muted-foreground">
+                                                        Bid Amount</th>
+                                                    <th class="px-4 py-2 text-left font-semibold text-muted-foreground">
+                                                        Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100">
+                                                <tr *ngFor="let bid of bidHistory">
+                                                    <td class="px-4 py-2 flex items-center gap-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-4 w-4 text-muted-foreground" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                                            <circle cx="12" cy="7" r="4"></circle>
+                                                        </svg>
+                                                        <span>{{bid?.fullName}}</span>
+                                                    </td>
+                                                    <td class="px-4 py-2 font-medium">
+                                                        {{bid?.bidAmount | currency:'INR':'symbol':'1.0-0' }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-muted-foreground">{{bid?.bidTime | date :
+                                                        'medium' }}</td>
+                                                </tr>
+
+                                                <!-- Repeat similar rows for other bidders -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm sticky top-4">
+            <div class="flex flex-col space-y-1.5 p-6">
+                <div class="text-2xl font-semibold leading-none tracking-tight">Bidding</div>
+                <div class="text-sm text-muted-foreground">Current bid: {{salvageData?.highestBid |
+                    currency:'INR':'symbol':'1.0-0'}}</div>
+            </div>
+            <div class="p-6 pt-0 space-y-4">
+                <div class="rounded-md bg-slate-100 p-3">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm font-medium">Time Remaining</div>
+                        <div class="font-semibold">{{ getTimeLeft(salvageData?.biddingEnd) }}</div>
+                    </div>
+                </div>
+                <div class="rounded-md bg-amber-50 p-3 text-amber-800">
+                    <p class="font-medium">You've been outbid!</p>
+                    <p class="text-sm">Your bid: {{salvageData?.yourBid | currency:'INR':'symbol':'1.0-0'}}</p>
+                    <!-- <p class="text-sm">Current highest: {{salvageData?.highestBid | currency:'INR':'symbol':'1.0-0'}} -->
+                </div>
+                <form class="space-y-4">
+                    <div class="space-y-2">
+                        <label
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Your
+                            Bid Amount (₹)</label>
+                        <input #bidAmount
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                            type="number" [value]="salvageData?.highestBid + salvageData?.incrementValue"
+                            name="bidAmount">
+                        <p class="text-sm text-muted-foreground">Minimum bid:
+                            {{salvageData?.highestBid + salvageData?.incrementValue}}
+                        </p>
+                        <!-- <p class="text-sm text-red-500">Bid must be at least {{salvageData?.highestBid + salvageData?.incrementValue |
+                            currency:'INR':'symbol':'1.0-0'}}
+                        </p> -->
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button *ngIf="salvageData?.status !== 'NOT_PARTICIPATE' && salvageData?.status !== 'PENDING'"
+                            (click)="placeBid(salvageData?.salvageId,bidAmount.value)"
+                            class="inline-flex bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                            type="button">
+                            Place Bid
+                        </button>
+                        <button *ngIf="salvageData?.status == 'NOT_PARTICIPATE' || salvageData?.status == 'PENDING'"
+                            (click)="particateInBidding(salvageData?.salvageId)"
+                            class="inline-flex bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                            type="button">
+                            Participate
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="p-6 flex flex-col items-start border-t px-6 py-4">
+                <h4 class="font-medium">Bidding Rules</h4>
+                <ul class="mt-2 space-y-1 text-sm text-muted-foreground">
+                    <li>• All bids are binding and cannot be retracted</li>
+                    <li>• Minimum bid increment: ₹100</li>
+                    <li>• Winner must complete payment within 3 business days</li>
+                    <li>• Buyer is responsible for all transportation costs</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

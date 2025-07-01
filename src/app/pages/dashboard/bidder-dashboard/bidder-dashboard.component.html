@@ -1,0 +1,370 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+            <div class="text-3xl font-bold">
+                Hi, {{userDetails?.fullName}}!
+            </div>
+            <p class="text-sm text-muted-foreground text-slate-600 ms-1">
+                Bidder Dashboard
+            </p>
+        </div>
+        <div class="flex flex-col gap-2 md:flex-row">
+            <button routerLink="/browse-auction"
+                class="inline-flex items-center justify-center gap-2 bg-[var(--primary-color)] text-white rounded-md text-sm hover:bg-[var(--primary-color-hover)] h-10 px-4 py-2">
+                Browse Auction
+            </button>
+            <div class="relative inline-block text-left" (clickOutside)="isDropdownOpen = false">
+                <!-- Profile Button -->
+                <button (click)="isDropdownOpen = !isDropdownOpen"
+                    class="flex items-center gap-2 h-10 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-100 focus:outline-none">
+                    <span class="text-sm font-medium">My Profile</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown -->
+                <div *ngIf="isDropdownOpen"
+                    class="absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div class="py-1">
+                        <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View
+                            Profile</a>
+                        <button (click)="logout()"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Counts -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                <div class="text-sm text-muted-foreground">Active Bids</div>
+            </div>
+            <div class="p-6 pt-0">
+                <p class="text-3xl font-bold">{{bidderData?.activeBids}}</p>
+            </div>
+        </div>
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                <div class="text-sm text-muted-foreground">Watchlist Items</div>
+            </div>
+            <div class="p-6 pt-0">
+                <p class="text-3xl font-bold">{{bidderData?.watchlistItems}}</p>
+            </div>
+        </div>
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                <div class="text-sm text-muted-foreground">Won Auctions</div>
+            </div>
+            <div class="p-6 pt-0">
+                <p class="text-3xl font-bold">{{bidderData?.wonAuctions}}</p>
+            </div>
+        </div>
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-2">
+                <div class="text-sm text-muted-foreground">Total Spent</div>
+            </div>
+            <div class="p-6 pt-0">
+                <p class="text-3xl font-bold">{{bidderData?.totalSpent | currency:'INR':'symbol':'1.0-0'}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <div
+            class="h-10 items-center bg-slate-100 justify-center gap-2 rounded-md bg-muted p-1 text-muted-foreground grid w-full grid-cols-3 md:w-auto">
+
+            <button type="button" (click)="activeTab = 'my_auctions'"
+                [ngClass]="{'bg-white text-black': activeTab === 'my_auctions', 'hover:bg-white': activeTab !== 'details'}"
+                class="inline-flex bg-white hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">
+                My Auctions
+            </button>
+
+            <button type="button" (click)="activeTab = 'watchlist'"
+                [ngClass]="{'bg-white text-black': activeTab === 'watchlist', 'hover:bg-white': activeTab !== 'condition'}"
+                class="inline-flex hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">
+                Watchlist
+            </button>
+
+            <button type="button" (click)="activeTab = 'won_items'"
+                [ngClass]="{'bg-white text-black': activeTab === 'won_items', 'hover:bg-white': activeTab !== 'bidHistory'}"
+                class="inline-flex hover:bg-white items-center justify-center rounded-md px-3 py-1.5 text-sm">
+                Won Items
+            </button>
+
+        </div>
+
+        <div class="mt-4">
+            <ng-container [ngSwitch]="activeTab">
+                <ng-container *ngSwitchCase="'my_auctions'">
+                    <div class="flex items-center justify-end p-1 mb-4">
+                        <div class="w-full md:w-1/3">
+                            <input type="text" placeholder="Search auctions..." (input)="searchAuction($event)"
+                                class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="flex flex-col space-y-1.5 p-6">
+                            <div class="text-2xl font-semibold leading-none tracking-tight">My Auction</div>
+                            <div class="text-sm text-muted-foreground">Auctions you've placed bids on
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <div class="space-y-4">
+                                <div class="space-y-6">
+                                    <div class="rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow bg-white"
+                                        *ngFor="let auction of myAuctionItems">
+
+                                        <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+
+                                            <!-- Left Section -->
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <h3 class="text-xl font-semibold text-gray-800">{{ auction?.title }}
+                                                    </h3>
+                                                    <span
+                                                        class="text-xs px-2 py-0.5 rounded-full text-white font-medium"
+                                                        [ngClass]="!auction?.closed ? 'bg-green-500' : 'bg-red-500'">
+                                                        {{auction?.closed ? 'End' : 'Active'}}
+                                                    </span>
+                                                </div>
+                                                <p class="text-sm text-gray-500">{{ auction?.companyName }}</p>
+                                            </div>
+
+                                            <!-- Middle Section -->
+                                            <div class="flex justify-center">
+                                                <div
+                                                    class="grid grid-cols-2 align-middle sm:grid-cols-4 gap-4 text-sm text-gray-700">
+                                                    <!-- Your Bid -->
+                                                    <div class="flex flex-col items-center">
+                                                        <p class="font-medium text-gray-600">Your Bid</p>
+                                                        <p class="flex items-center text-green-600 font-semibold">
+                                                            {{ auction?.yourBid |
+                                                            currency:'INR':'symbol':'1.0-0' }}
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="ml-1 h-4 w-4 text-green-600" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor"
+                                                                stroke-width="2">
+                                                                <circle cx="12" cy="12" r="10" />
+                                                                <path d="M16 12l-4-4-4 4M12 16V8" />
+                                                            </svg>
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Highest Bid -->
+                                                    <div class="flex flex-col items-center">
+                                                        <p class="font-medium text-gray-600">Highest Bid</p>
+                                                        <p class="text-gray-800 font-semibold">{{auction?.highestBid |
+                                                            currency:'INR':'symbol':'1.0-0' }}
+                                                        <p>
+                                                    </div>
+
+                                                    <!-- Next Bid -->
+                                                    <div class="flex flex-col items-center">
+                                                        <p class="font-medium text-gray-600">Next Bid</p>
+                                                        <p class="text-gray-800 font-semibold">{{auction?.nextBid |
+                                                            currency:'INR':'symbol':'1.0-0'}}</p>
+                                                    </div>
+
+                                                    <!-- Ends -->
+                                                    <div class="flex flex-col items-center">
+                                                        <p class="font-medium text-gray-600">Ends</p>
+                                                        <div class="flex items-center text-gray-700">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="mr-1 h-4 w-4 text-gray-500" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor"
+                                                                stroke-width="2">
+                                                                <circle cx="12" cy="12" r="10" />
+                                                                <polyline points="12 6 12 12 16 14" />
+                                                            </svg>
+                                                            {{ auction?.biddingEnd | date:'mediumDate' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Action Button -->
+                                            <div class="flex justify-end md:items-center">
+                                                <button (click)="viewAuction(auction?.salvageId)"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-600 hover:bg-slate-700 rounded-md transition">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                        stroke-width="2">
+                                                        <path
+                                                            d="M2.062 12.348a1 1 0 0 1 0-.696A10.75 10.75 0 0 1 21.938 12a1 1 0 0 1 0 .696A10.75 10.75 0 0 1 2.062 12.348Z" />
+                                                        <circle cx="12" cy="12" r="3" />
+                                                    </svg>
+                                                    View
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'watchlist'">
+                    <div class="flex items-center justify-end p-1 mb-4">
+                        <div class="w-full md:w-1/3">
+                            <input type="text" placeholder="Search watchlist..." (input)="searchAuction($event)"
+                                class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="flex flex-col space-y-1.5 p-6">
+                            <div class="text-2xl font-semibold leading-none tracking-tight">My Watchlist</div>
+                            <div class="text-sm text-muted-foreground">Auctions you're keeping an eye on</div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+                                <div class="overflow-hidden rounded-lg border" *ngFor="let items of watchListItems">
+                                    <div class="relative h-40 w-full"><img alt="2021 Nissan Altima - Flood Damage"
+                                            loading="lazy" decoding="async" data-nimg="fill" class="object-cover"
+                                            [src]="items?.images[0]?.base64Image"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="line-clamp-1 font-semibold">{{items?.title}}</h3>
+                                        <!-- <p class="text-sm text-muted-foreground">{{items?.title}}</p> -->
+                                        <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                                            <div>Min Bid: {{items?.minimumBidAmount | currency:'INR':'symbol':'1.0-0'}}
+                                            </div>
+                                            <div>Current Bid: {{items?.highestBid | currency:'INR':'symbol':'1.0-0'}}
+                                            </div>
+                                            <div>Bids: 7</div>
+                                            <div>Ends: {{items?.biddingEnd | date:'mediumDate'}}</div>
+                                        </div>
+                                        <div class="mt-4 flex gap-2"><a
+                                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3 flex-1"
+                                                (click)="viewAuction(items?.salvageId)"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-eye mr-1 h-4 w-4">
+                                                    <path
+                                                        d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0">
+                                                    </path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>View</a><button
+                                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 w-10"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-bell-off h-4 w-4">
+                                                    <path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"></path>
+                                                    <path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"></path>
+                                                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                                                    <path d="m2 2 20 20"></path>
+                                                </svg><span class="sr-only">Remove from watchlist</span></button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'won_items'">
+                    <div class="flex items-center justify-end p-1 mb-4">
+                        <div class="w-full md:w-1/3">
+                            <input type="text" placeholder="Search wonitems..." (input)="searchAuction($event)"
+                                class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <div class="flex flex-col space-y-1.5 p-6">
+                            <div class="text-2xl font-semibold leading-none tracking-tight">Won Items</div>
+                            <div class="text-sm text-muted-foreground">Auctions you've won and their status</div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <div class="space-y-6">
+                                <div class="overflow-hidden rounded-lg border" *ngFor="let wonItem of wonItems">
+                                    <div class="flex flex-col md:flex-row">
+                                        <div class="relative h-48 w-full md:h-auto md:w-1/3"><img
+                                                alt="2018 BMW 3 Series - Collision Damage" loading="lazy"
+                                                decoding="async" data-nimg="fill" class="object-cover"
+                                                [src]="wonItem.images[0].base64Image"
+                                                style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        </div>
+                                        <div class="flex flex-1 flex-col p-4">
+                                            <div>
+                                                <h3 class="font-semibold">{{wonItem?.salvageTitle}}</h3>
+                                                <p class="text-sm text-muted-foreground">{{wonItem?.companyName}}</p>
+                                            </div>
+                                            <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm md:grid-cols-4">
+                                                <div>
+                                                    <p class="font-medium">Final Bid</p>
+                                                    <p>{{wonItem?.finalBid | currency:'INR':'symbol':'1.0-0'}}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Win Date</p>
+                                                    <p>{{wonItem?.winDate | date:'mediumDate'}}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Payment</p>
+                                                    <p
+                                                        class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-primary-foreground hover:bg-primary/80 bg-green-500">
+                                                        {{wonItem?.paymentStatus}}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium">Delivery</p>
+                                                    <p
+                                                        class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
+                                                        {{wonItem?.deliveryStatus}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 flex flex-wrap gap-2"><button
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                                                    (click)="viewAuction(wonItem?.salvageId)"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" class="lucide lucide-eye mr-1 h-4 w-4">
+                                                        <path
+                                                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0">
+                                                        </path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>View Details</button><button
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="lucide lucide-download mr-1 h-4 w-4">
+                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                                        <line x1="12" x2="12" y1="15" y2="3"></line>
+                                                    </svg>Receipt</button><button
+                                                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="lucide lucide-truck mr-1 h-4 w-4">
+                                                        <path
+                                                            d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2">
+                                                        </path>
+                                                        <path d="M15 18H9"></path>
+                                                        <path
+                                                            d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
+                                                        </path>
+                                                        <circle cx="17" cy="18" r="2"></circle>
+                                                        <circle cx="7" cy="18" r="2"></circle>
+                                                    </svg>Arrange Pickup</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>

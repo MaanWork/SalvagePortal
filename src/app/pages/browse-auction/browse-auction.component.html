@@ -1,0 +1,35 @@
+<div class="container mx-auto px-4 py-12">
+    <!-- Back Button -->
+    <!-- Top Bar: Back + Title on Left, Search on Right -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-14 gap-4">
+        <!-- Back Button + Heading -->
+        <div class="flex items-center gap-2 cursor-pointer">
+            <a (click)="goBack()"
+                class="inline-flex items-center gap-2 text-white bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] transition-colors p-2 rounded-full font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h2 class="text-3xl font-bold ms-2">Choose Your Auctions</h2>
+        </div>
+    
+        <!-- Search Bar -->
+        <div class="w-full md:w-1/3">
+            <input type="text" placeholder="Search auctions..." (input)="searchAuction($event)"
+                class="w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+        </div>
+    </div>
+
+    <!-- Auction Cards -->
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <ng-container *ngFor="let auction of slavageList">
+            <app-auction-card [title]="auction.title" [companyName]="auction.companyName"
+                [description]="auction.description" [minimumBidAmount]="auction.minimumBidAmount"
+                [incrementValue]="auction.incrementValue" [biddingStart]="auction.biddingStart"
+                [biddingEnd]="auction.biddingEnd" (viewDetails)="viewDetails(auction)"
+                [imageUrl]="auction?.images[0]?.base64Image || 'https://imgd.aeplcdn.com/664x374/n/cw/ec/192443/camry-exterior-right-front-three-quarter-2.jpeg?isig=0&q=80'">
+            </app-auction-card>
+        </ng-container>
+    </div>
+</div>

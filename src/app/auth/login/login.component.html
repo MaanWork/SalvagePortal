@@ -1,0 +1,67 @@
+<div routerLink="/home"
+  class="flex items-center justify-end gap-2 m-3 border border-gray-300 rounded-md absolute w-fit px-2 py-1.5 cursor-pointer
+      hover:bg-blue-100 hover:text-blue-700 hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out group">
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+    class="h-4 w-4 text-gray-600 group-hover:text-blue-700 transition duration-200 ease-in-out">
+    <path
+      d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
+    <path
+      d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
+  </svg>
+
+  <p class="leading-4 text-sm hidden md:block group-hover:text-blue-700 transition duration-200 ease-in-out">
+    Home
+  </p>
+</div>
+
+<div class="container mx-auto max-w-md px-4 py-12">
+  <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div class="flex flex-col space-y-1.5 p-6">
+      <div class="text-2xl font-bold leading-none tracking-tight">Login</div>
+      <div class="text-sm text-slate-600 text-muted-foreground">Sign in to your account to access the salvage
+        bidding platform.
+      </div>
+    </div>
+    <div class="p-6 pt-0">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none" for="email">Email</label>
+          <input formControlName="email"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+            type="email" id="email" placeholder="john@example.com" />
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-sm text-red-500">
+            Valid email is required.
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm font-medium leading-none" for="password">Password</label>
+          <input formControlName="password"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+            type="password" id="password" placeholder="••••••••" />
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            class="text-sm text-red-500">
+            Password is required.
+          </div>
+        </div>
+
+        <button
+          class="inline-flex items-center bg-[var(--primary-color)] text-white hover:bg-[var(--primary-color-hover)] justify-center gap-2 rounded-md text-sm h-10 px-4 py-2 w-full"
+          type="submit" [disabled]="loginForm.invalid">
+          Login
+        </button>
+
+        <div class="items-center p-6 pt-0 flex flex-col space-y-2">
+          <p class="text-sm text-muted-foreground text-slate-700">
+            Don't have an account?
+            <a class="font-medium text-primary underline underline-offset-4" routerLink="/register">Register here</a>
+          </p>
+          <a class="text-sm text-slate-700 underline underline-offset-4" href="/forgot-password">Forgot your
+            password?</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

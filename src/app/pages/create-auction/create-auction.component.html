@@ -1,0 +1,260 @@
+<div routerLink="/view-dashboard"
+  class="flex items-center justify-end gap-2 m-3 border border-gray-300 rounded-md absolute w-fit px-2 py-1.5 cursor-pointer
+      hover:bg-blue-100 hover:text-blue-700 hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out group">
+
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+      
+
+  <p class="leading-4 text-sm hidden md:block group-hover:text-blue-700 transition duration-200 ease-in-out">
+    Back
+  </p>
+</div>
+
+<div class="container mx-auto max-w-3xl px-4 py-12">
+  <div class="rounded-lg border bg-white text-gray-900 shadow-sm">
+    <div class="flex flex-col space-y-1.5 p-6">
+      <h2 class="text-2xl font-semibold tracking-tight">Create New Salvage Auction</h2>
+      <p class="text-sm text-gray-500">Post a new salvage item for auction. Set the details, bidding rules, and upload
+        images.</p>
+    </div>
+
+    <div class="p-6 pt-0">
+      <form [formGroup]="auctionForm" class="space-y-8">
+
+        <!-- Title -->
+        <div>
+          <label for="title" class="text-sm font-medium">Title</label>
+          <input id="title" type="text" formControlName="title" placeholder="e.g. 2020 Toyota Camry - Water Damage"
+            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          <div *ngIf="auctionForm.get('title')?.touched && auctionForm.get('title')?.invalid"
+            class="text-red-600 text-sm">
+            Title is required (min 5 characters).
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="text-sm font-medium">Description</label>
+          <textarea id="description" formControlName="description"
+            placeholder="Detailed description of the salvage item..."
+            class="w-full rounded-md border px-3 py-2 text-sm min-h-32 focus:ring-2 focus:ring-blue-500"></textarea>
+          <div *ngIf="auctionForm.get('description')?.touched && auctionForm.get('description')?.invalid"
+            class="text-red-600 text-sm">
+            Description is required.
+          </div>
+        </div>
+
+        <!-- Minimum Bid and Increment -->
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="minimumBidAmount" class="text-sm font-medium">Minimum Bid</label>
+            <input id="minimumBidAmount" type="number" formControlName="minimumBidAmount"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <div *ngIf="auctionForm.get('minimumBidAmount')?.touched && auctionForm.get('minimumBidAmount')?.invalid"
+              class="text-red-600 text-sm">
+              Minimum bid is required and must be at least 1.
+            </div>
+          </div>
+          <div>
+            <label for="incrementValue" class="text-sm font-medium">Increment Value</label>
+            <input id="incrementValue" type="number" formControlName="incrementValue"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- <div>
+            <label for="bidIncrement" class="text-sm font-medium">Bid Increment</label>
+            <input id="bidIncrement" type="number" formControlName="bidIncrement"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <div *ngIf="auctionForm.get('bidIncrement')?.touched && auctionForm.get('bidIncrement')?.invalid"
+              class="text-red-600 text-sm">
+              Increment is required and must be at least 1.
+            </div>
+            <div *ngIf="auctionForm.errors?.['bidIncrementInvalid'] && auctionForm.get('bidIncrement')?.touched"
+              class="text-red-600 text-sm">
+              Bid increment must not be less than minimum bid.
+            </div>
+          </div> -->
+        </div>
+
+        <!-- Bidding Start & End Dates -->
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="biddingStart" class="text-sm font-medium">Start Date</label>
+            <input id="biddingStart" type="datetime-local" formControlName="biddingStart"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <div *ngIf="auctionForm.get('biddingStart')?.touched && auctionForm.get('biddingStart')?.invalid"
+              class="text-red-600 text-sm">
+              Start date is required.
+            </div>
+            <div *ngIf="auctionForm.errors?.['pastDatesNotAllowed'] && auctionForm.get('biddingStart')?.touched"
+              class="text-red-600 text-sm">
+              Start and End dates must be in the future.
+            </div>
+            <div *ngIf="auctionForm.errors?.['endBeforeStart'] && auctionForm.get('biddingEnd')?.touched"
+              class="text-red-600 text-sm">
+              End date must be after Start date.
+            </div>
+          </div>
+          <div>
+            <label for="biddingEnd" class="text-sm font-medium">End Date</label>
+            <input id="biddingEnd" type="datetime-local" formControlName="biddingEnd"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <div *ngIf="auctionForm.get('biddingEnd')?.touched && auctionForm.get('biddingEnd')?.invalid"
+              class="text-red-600 text-sm">
+              End date is required.
+            </div>
+            <div *ngIf="auctionForm.errors?.['pastDatesNotAllowed'] && auctionForm.get('biddingStart')?.touched"
+              class="text-red-600 text-sm">
+              Start and End dates must be in the future.
+            </div>
+            <div *ngIf="auctionForm.errors?.['endBeforeStart'] && auctionForm.get('biddingEnd')?.touched"
+              class="text-red-600 text-sm">
+              End date must be after Start date.
+            </div>
+          </div>
+        </div>
+
+        <!-- Condition & Location -->
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="conditionDetails" class="text-sm font-medium">Condition Details</label>
+            <select id="conditionDetails" formControlName="conditionDetails"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+              <option value="" disabled selected>Select condition</option>
+              <option *ngFor="let condition of conditionOptions" [value]="condition">{{ condition }}</option>
+            </select>
+            <div *ngIf="auctionForm.get('conditionDetails')?.touched && auctionForm.get('conditionDetails')?.invalid"
+              class="text-red-600 text-sm">
+              Condition details required.
+            </div>
+          </div>
+          <div>
+            <label for="country" class="text-sm font-medium">Country</label>
+
+            <select name="country" id="country" formControlName="country"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 cursor-pointer">
+              <option value="" selected> Select Country</option>
+              <option [value]="country?.countryId" *ngFor="let country of countries">
+                {{country?.countryName}}
+              </option>
+            </select>
+
+            <div *ngIf="auctionForm.get('country')?.touched && auctionForm.get('country')?.invalid"
+              class="text-red-600 text-sm">
+              Country is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="region" class="text-sm font-medium">Region</label>
+
+            <select name="region" id="region" formControlName="region"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 cursor-pointer">
+              <option value="" disabled selected> Select region</option>
+              <option [value]="region?.regionId" *ngFor="let region of region">{{region?.regionName}}</option>
+            </select>
+
+            <div *ngIf="auctionForm.get('region')?.touched && auctionForm.get('region')?.invalid"
+              class="text-red-600 text-sm">
+              region is required.
+            </div>
+          </div>
+          <div>
+            <label for="district" class="text-sm font-medium">District</label>
+
+            <select name="district" id="district" formControlName="district"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 cursor-pointer">
+              <option value="" disabled selected> Select district</option>
+              <option [value]="district?.districtId" *ngFor="let district of district">{{district?.districtName}}
+              </option>
+            </select>
+
+            <div *ngIf="auctionForm.get('district')?.touched && auctionForm.get('district')?.invalid"
+              class="text-red-600 text-sm">
+              district is required.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Additional Fields -->
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="minimumBiddingPersons" class="text-sm font-medium">Minimum Bidding Persons</label>
+            <input id="minimumBiddingPersons" type="number" formControlName="minimumBiddingPersons"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label for="companyName" class="text-sm font-medium">Company Name</label>
+            <input id="companyName" type="text" formControlName="companyName"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <label for="claimNumber" class="text-sm font-medium">Claim Number</label>
+            <input id="claimNumber" type="text" formControlName="claimNumber"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label for="makeModel" class="text-sm font-medium">Make & Model</label>
+            <input id="makeModel" type="text" formControlName="makeModel"
+              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+
+        <!-- for image upload -->
+        <div *ngIf="auctionImgCreated">
+          <label class="text-sm font-medium leading-none">Images</label>
+          <div class="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+
+            <!-- Existing images preview -->
+            <div *ngFor="let image of imagePreviews; let i = index" class="relative rounded-md border">
+              <img [src]="image" alt="Uploaded Image {{ i + 1 }}" class="h-32 w-full rounded-md object-cover" />
+              <button
+                class="absolute right-1 top-1 h-6 w-6 bg-red-500 text-destructive-foreground hover:bg-destructive/90 rounded-md flex items-center justify-center"
+                (click)="removeImage(i)" type="button">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Upload new image -->
+            <label
+              class="flex h-32 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M5 12h14"></path>
+                <path d="M12 5v14"></path>
+              </svg>
+              <span class="text-sm text-slate-600">Add Image</span>
+              <input type="file" class="hidden" (change)="onFileChange($event)" multiple accept="image/*" />
+            </label>
+          </div>
+
+          <p class="text-sm text-slate-600 mt-2">
+            Upload clear images of the salvage item from multiple angles.
+          </p>
+        </div>
+
+
+        <!-- Submit Button -->
+        <button type="button" (click)="onSubmit()"
+          class="w-full h-10 bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-white rounded-md text-sm font-medium transition">
+          {{auctionImgCreated ? 'Upload Image' : 'Create Auction'}}
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+</div>
